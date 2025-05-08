@@ -17,10 +17,10 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-    // Get all books
+    // ✅ Get only APPROVED books
     @GetMapping
-    public List<Book> getAllBooks() {
-        return bookService.getAllBooks();
+    public List<Book> getApprovedBooks() {
+        return bookService.getApprovedBooks();
     }
 
     // Get a book by ID
@@ -31,14 +31,14 @@ public class BookController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Add a new book
+    // Add a new book (status will be set to PENDING in service)
     @PostMapping
     public ResponseEntity<Book> addBook(@RequestBody Book book) {
         Book createdBook = bookService.addBook(book);
         return new ResponseEntity<>(createdBook, HttpStatus.CREATED);
     }
 
-    // Update an existing book
+    // Update a book
     @PutMapping("/{id}")
     public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book updatedBook) {
         Book updated = bookService.updateBook(id, updatedBook);

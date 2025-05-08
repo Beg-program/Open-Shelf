@@ -1,12 +1,15 @@
 package com.openshelf.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Book {
+
+    public enum Status {
+        PENDING,
+        APPROVED,
+        REJECTED
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,13 +19,22 @@ public class Book {
     private String author;
     private String description;
 
-    // Constructors
-    public Book() {}
+    private String fileURL;
 
-    public Book(String title, String author, String description) {
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
+    // Constructors
+    public Book() {
+        this.status = Status.PENDING;
+    }
+
+    public Book(String title, String author, String description, String fileURL, Status status) {
         this.title = title;
         this.author = author;
         this.description = description;
+        this.fileURL = fileURL;
+        this.status = status;
     }
 
     // Getters and Setters
@@ -56,5 +68,21 @@ public class Book {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getFileURL() {
+        return fileURL;
+    }
+
+    public void setFileURL(String fileURL) {
+        this.fileURL = fileURL;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }

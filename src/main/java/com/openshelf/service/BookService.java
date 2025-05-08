@@ -1,6 +1,7 @@
 package com.openshelf.service;
 
 import com.openshelf.model.Book;
+import com.openshelf.model.Book.Status;
 import com.openshelf.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,9 +15,9 @@ public class BookService {
     @Autowired
     private BookRepository bookRepository;
 
-    // Get all books
-    public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+    // Get only APPROVED books
+    public List<Book> getApprovedBooks() {
+        return bookRepository.findByStatus(Status.APPROVED);
     }
 
     // Get a single book by ID
@@ -24,8 +25,9 @@ public class BookService {
         return bookRepository.findById(id);
     }
 
-    // Add a new book
+    // Add a new book (set status to PENDING)
     public Book addBook(Book book) {
+        book.setStatus(Status.PENDING);
         return bookRepository.save(book);
     }
 
@@ -36,6 +38,8 @@ public class BookService {
                 book.setTitle(updatedBook.getTitle());
                 book.setAuthor(updatedBook.getAuthor());
                 book.setDescription(updatedBook.getDescription());
+                book.setFileURL(updatedBook.getFileURL());
+                book.setStatus(updatedBook.getStatus());
                 return bookRepository.save(book);
             })
             .orElseGet(() -> {
