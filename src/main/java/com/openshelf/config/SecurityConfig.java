@@ -20,22 +20,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                .antMatchers("/admin/**").hasRole("ADMIN") // Admin routes protected
-                .antMatchers("/api/books/**").permitAll() // Public access to book routes
+                // Admin-specific routes for books and audiobooks
+                .antMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
+                // Public access to book and audiobook routes
+                .antMatchers("/api/books/**", "/api/audiobooks/**").permitAll()
+                // Any other requests require authentication
                 .anyRequest().authenticated()
             .and()
             .formLogin() // Enable form-based login
                 .permitAll()
             .and()
-            .logout()
+            .logout() // Allow logout
                 .permitAll();
     }
 
+    // Password encoder for password hashing
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // Define the UserDetailsService for authentication
     @Bean
     @Override
     public UserDetailsService userDetailsService() {
