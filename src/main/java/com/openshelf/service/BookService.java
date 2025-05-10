@@ -15,6 +15,16 @@ public class BookService {
     @Autowired
     private BookRepository bookRepository;
 
+    // Get all books
+    public List<Book> getAllBooks() {
+        return bookRepository.findAll();
+    }
+
+    // Get books by status
+    public List<Book> getBooksByStatus(Status status) {
+        return bookRepository.findByStatus(status);
+    }
+
     // Get only APPROVED books
     public List<Book> getApprovedBooks() {
         return bookRepository.findByStatus(Status.APPROVED);
@@ -39,7 +49,11 @@ public class BookService {
                 book.setAuthor(updatedBook.getAuthor());
                 book.setDescription(updatedBook.getDescription());
                 book.setFileURL(updatedBook.getFileURL());
-                book.setStatus(updatedBook.getStatus());
+
+                // Ensure status is only updated if provided
+                if (updatedBook.getStatus() != null) {
+                    book.setStatus(updatedBook.getStatus());
+                }
                 return bookRepository.save(book);
             })
             .orElseGet(() -> {
@@ -51,5 +65,21 @@ public class BookService {
     // Delete a book
     public void deleteBook(Long id) {
         bookRepository.deleteById(id);
+    }
+
+    // Approve a book
+    public Book approveBook(Long id) {
+        return bookRepository.findById(id).map(book -> {
+            book.setStatus(Status.APPROVED);
+            return bookRepository.save(book);
+        }).orElse(null);
+    }
+
+    // Reject a book
+    public Book rejectBook(Long id) {
+        return bookRepository.findById(id).map(book -> {
+            book.setStatus(Status.REJECTED);
+            return bookRepository.save(book);
+        }).orElse(null);
     }
 }

@@ -15,13 +15,19 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String title;
+
+    @Column(nullable = false)
     private String author;
+
+    @Column(length = 1000)
     private String description;
 
     private String fileURL;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Status status;
 
     // Constructors
@@ -34,7 +40,7 @@ public class Book {
         this.author = author;
         this.description = description;
         this.fileURL = fileURL;
-        this.status = status;
+        this.status = status != null ? status : Status.PENDING;
     }
 
     // Getters and Setters

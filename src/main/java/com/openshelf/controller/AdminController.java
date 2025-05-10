@@ -19,32 +19,32 @@ public class AdminController {
 
     // GET /admin/pending-books - Show books with PENDING status
     @GetMapping("/pending-books")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")  // Ensuring only ADMIN can access this endpoint
     public List<Book> getPendingBooks() {
-        return bookService.getBooksByStatus(Book.Status.PENDING);
+        return bookService.getBooksByStatus(Book.Status.PENDING);  // Returns a list of books with PENDING status
     }
 
     // PUT /admin/approve/{bookId} - Approve a book
     @PutMapping("/approve/{bookId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")  // Ensuring only ADMIN can approve
     public ResponseEntity<Book> approveBook(@PathVariable Long bookId) {
-        Book approvedBook = bookService.approveBook(bookId);
+        Book approvedBook = bookService.approveBook(bookId);  // Approves the book
         if (approvedBook != null) {
-            return ResponseEntity.ok(approvedBook);
+            return ResponseEntity.ok(approvedBook);  // Return the approved book details
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();  // Return 404 if the book wasn't found
         }
     }
 
     // PUT /admin/reject/{bookId} - Reject a book
     @PutMapping("/reject/{bookId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")  // Ensuring only ADMIN can reject
     public ResponseEntity<Book> rejectBook(@PathVariable Long bookId) {
-        Book rejectedBook = bookService.rejectBook(bookId);
+        Book rejectedBook = bookService.rejectBook(bookId);  // Rejects the book
         if (rejectedBook != null) {
-            return ResponseEntity.ok(rejectedBook);
+            return ResponseEntity.ok(rejectedBook);  // Return the rejected book details
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();  // Return 404 if the book wasn't found
         }
     }
 }
