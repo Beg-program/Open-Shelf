@@ -21,17 +21,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .csrf(csrf -> csrf.disable()) // Optional: disable CSRF for APIs
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/books/**", "/api/audiobooks/**").permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers("/api/users/register", "/api/auth/login").permitAll() // Public access to login & register
+                .anyRequest().authenticated() // All other requests require authentication
             )
-            .formLogin(form -> form
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .permitAll()
-            );
+            .formLogin(form -> form.permitAll()) // ✅ Disable default login form for APIs
+            .httpBasic().disable() // Disable HTTP Basic authentication
+            .logout(logout -> logout.permitAll()); // Allow logout for all
         return http.build();
     }
 
@@ -45,7 +44,7 @@ public class SecurityConfig {
 
     /**
      * UserDetailsService backed by JDBC.
-     * You must define a datasource bean elsewhere in your config.
+     * Ensure a DataSource bean is defined elsewhere in your config.
      */
     @Bean
     public UserDetailsService userDetailsService(DataSource dataSource) {
